@@ -1,4 +1,6 @@
 syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
 
 message Position {
     /*
