@@ -1,41 +1,43 @@
 #include <Arduino.h>
-#include <Wire.h>
+#include <esp_log.h>
 
 #include "configuration.h"
-#include "modules/PositionModule.h"
-
-#define STR_HELPER(x) #x
-#define STR(x) STR_HELPER(x)
+#include "util.h"
+#include "modules/Modules.h"
 
 unsigned long lastGNSSsend = 0;
+static const char* TAG = "main";
 
 void setup() {
+    // Creates module class instances
+    deployModules();
+
+    // TODO: temporary reference to serial for debugging aid
     Serial.begin(115200);
-    Serial.println(F(""));
-    Serial.println(F(""));
-    Serial.println(F("[[[ ESP32-LoRa-APRS ]]]"));
-    Serial.println(F(""));
-    Serial.println(F(""));
+
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "---------- ESP32-LoRa-APRS ----------");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "");
+    ESP_LOGI(TAG, "System starting");
 
     #if defined(HAS_I2C)
-        Serial.println((String)"Starting I2C (SDA: "+STR(I2C_SDA)+", SCL: "+STR(I2C_SCL)+")");
-        Wire.begin(I2C_SDA, I2C_SCL);
+        i2cModule->initialize();
     #endif
 
-    #if defined(HAS_GPS)
-        Serial.println(F("Initializing PositionModule"));
-        positionModule = new PositionModule();
-        positionModule->initialize();
+    #if defined(HAS_PMU)
+        powerModule->initialize();
     #endif
+
+    stateModule->initialize();
     
-    Serial.println(F("Initialization complete"));
+    ESP_LOGI(TAG, "Initialization complete");
 }
 
 void loop() {
     if (millis() - lastGNSSsend > 1000) {
-        #if defined(HAS_GPS)
-            positionModule->checkPosition();
-        #endif
+        stateModule->checkPosition();
         lastGNSSsend = millis();
     }
 }
