@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+message Position {
+    /*
+     * Stores latitude in 4-byte signed integer (multiply by 1e-7 to get floating point degrees)
+     */
+    optional sfixed32 latitude = 1;
+
+    /*
+     * Stores longitude in 4-byte signed integer (multiply by 1e-7 to get floating point degrees)
+     */
+    optional sfixed32 longitude = 2;
+
+    /*
+     * Stores MSL altitude in variable-length signed integer (multiply by 1e-3 to get floating point meters)
+     */
+    optional sint32 altitude = 3;
+
+    /*
+     * Stores HAE altitude in variable-length signed integer (multiply by 1e-3 to get floating point meters)
+     */
+    optional sint32 altitude_hae = 4;
+
+    /*
+     * Stores seconds since 1970
+     */
+    fixed32 time = 5;
+
+    /*
+     * Position source: manual, internal GPS, external GPS
+     */
+    enum PositionSource {
+        POSITION_UNKNOWN = 0;
+        POSITION_MANUAL = 1;
+        POSITION_INTERNAL = 2;
+        POSITION_EXTERNAL = 3;
+    }
+
+    /*
+     * Type of position acquisition
+     */
+    PositionSource position_source = 6;
+
+    /*
+     * Altitude source: manual, internal GPS, external GPS, barometric sensor
+     */
+    enum AltitudeSource {
+        ALTITUDE_UNKNOWN = 0;
+        ALTITUDE_MANUAL = 1;
+        ALTITUDE_INTERNAL = 2;
+        ALTITUDE_EXTERNAL = 3;
+        ALTITUDE_BAROMETRIC = 4;
+    }
+
+    /*
+     * Type of altitude acquisition
+     */
+    AltitudeSource altitude_source = 7;
+
+    /*
+     * Timestamp of GPS position acquisition in seconds since 1970
+     */
+    fixed32 position_timestamp = 8;
+
+    /*
+     * Position Dilution of Precision (multiply by 1e-2 to get floating point value)
+     * Can be calculated from HDOP and VDOP: PDOP=sqrt(HDOP^2 + VDOP^2)
+     */
+    uint32 PDOP = 9;
+
+    /*
+     * Horizontal Dilution of Precision (multiply by 1e-2 to get floating point value)
+     */
+    uint32 HDOP = 10;
+
+    /*
+     * Vertical Dilution of Precision (multiply by 1e-2 to get floating point value)
+     */
+    uint32 VDOP = 11;
+
+    /*
+     * Ground speed in mm/s (multiply by 1e-3 to get floating point value in meters)
+     */
+    optional uint32 ground_speed = 12;
+
+    /*
+     * Heading in degrees * 10^-5 (multiply by 1e-5 to get floating point degrees)
+     */
+    optional uint32 heading = 13;
+
+    /*
+     * Fix type indicator:
+     * 0 = no fix
+     * 1 = dead reckoning (requires external sensors)
+     * 2 = 2D (not quite enough satellites in view)
+     * 3 = 3D (the standard fix)
+     * 4 = GNSS + dead reckoning (requires external sensors)
+     * 5 = Time fix only
+     */
+    uint32 fix_type = 14;
+
+    /*
+     * Sattelites In View
+     */
+    uint32 siv = 15;
+
+    /*
+     * Sequence counter
+     */
+    uint32 sequence_counter = 16;
+}
