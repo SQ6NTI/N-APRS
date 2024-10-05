@@ -8,4 +8,5 @@ void deployModules() {
     powerModule = new PowerModule();
     stateModule = new StateModule();
     gpsModule = new GPSModule();
+    radioModule = new RadioModule();
 }

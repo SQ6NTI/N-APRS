@@ -5,7 +5,7 @@
 static const char *const TAG = "PowerModule";
 
 #if defined(HAS_AXP192)
-  AXP20X_Class axp;
+    AXP20X_Class axp;
 #endif
 
 PowerModule *powerModule;
