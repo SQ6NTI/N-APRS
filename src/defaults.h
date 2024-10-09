@@ -7,5 +7,5 @@
 #define DEFAULT_LORA_SYNCWORD 0x12      /* Default LoRa sync word (RADIOLIB_SX126X_SYNC_WORD_PRIVATE for now) */
 #define DEFAULT_LORA_POWER 10           /* Default LoRa power in dBm */
 #define DEFAULT_LORA_PREAMBLE_LEN 8     /* Default LoRa preamble length in symbols */
-#define DEFAULT_LORA_TCXO_V 1.8         /* Default LoRa preamble length in symbols */
-
+#define DEFAULT_LORA_TCXO_V 1.8         /* Default LoRa TCXO reference voltage on DIO3 */
+#undef  DEFAULT_LORA_USE_LDO            /* Default LoRa regulator: defined = LDO, undefined = DC-DC */
