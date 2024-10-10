@@ -7,7 +7,7 @@
 #define I2C_SDA                     21      /* ESP32 IO22 (PIN39) = I2C SDA */
 #define I2C_SCL                     22      /* ESP32 IO22 (PIN39) = I2C SCL */
 #define PMU_IRQ                     35      /* ESP32 IO35 (PIN11) = AXP192 IRQ/WAKEUP             (PIN48) */
-#define RADIO_SCLK_PIN              5       /* ESP32 IO5  (PIN34) = LORA32 PIN5  = SX126X SCK     (PIN18) */
+#define RADIO_SCK_PIN               5       /* ESP32 IO5  (PIN34) = LORA32 PIN5  = SX126X SCK     (PIN18) */
 #define RADIO_MISO_PIN              19      /* ESP32 IO19 (PIN38) = LORA32 PIN7  = SX126X MISO    (PIN16) */
 #define RADIO_MOSI_PIN              27      /* ESP32 IO27 (PIN16) = LORA32 PIN6  = SX126X MOSI    (PIN17) */
 #define RADIO_CS_PIN                18      /* ESP32 IO18 (PIN35) = LORA32 PIN4  = SX126X NSS     (PIN19) */
@@ -35,9 +35,10 @@
 /* Radio component */
 #define HAS_SX1268
 #define HAS_SX126X
-#define SX126X_CS RADIO_CS_PIN
-#define SX126X_BUSY RADIO_DIO2_PIN          /* DIO2 is used as BUSY pin */
-#define SX126X_IRQ RADIO_DIO1_PIN           /* DIO1 is used as IRQ pin */
-#define SX126X_RESET RADIO_RST_PIN
+#define RADIO_SPI_FREQ              10000000       /* In MHz. ESP32 default is 10 MHz. Max for SX1268 is 16 MHz */
+#define SX126X_CS                   RADIO_CS_PIN
+#define SX126X_BUSY                 RADIO_DIO2_PIN /* DIO2 is used as BUSY pin */
+#define SX126X_IRQ                  RADIO_DIO1_PIN /* DIO1 is used as IRQ pin */
+#define SX126X_RESET                RADIO_RST_PIN
 #define SX126X_DIO2_AS_RF_SWITCH
-#define SX126X_DIO3_TCXO_VOLTAGE 1.8        /* This may have no effect on this board as IO3 looks not connected */
+#define SX126X_DIO3_TCXO_VOLTAGE    1.8 /* This may have no effect on this board as IO3 looks not connected */

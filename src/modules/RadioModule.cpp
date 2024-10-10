@@ -7,11 +7,13 @@ static const char *const TAG = "RadioModule";
 RadioModule *radioModule;
 
 RadioModule::RadioModule() {
-    
+
 }
 
 bool RadioModule::initialize() {
     int state = RADIOLIB_ERR_NONE;
+
+    spiModule->initializeRadioSPI();
 
     #if defined(HAS_SX126X)
         #if defined(SX126X_DIO3_TCXO_VOLTAGE)
@@ -32,9 +34,9 @@ bool RadioModule::initialize() {
         ESP_LOGD(TAG, "LoRA voltage regulator: %s", useRegulatorLDO ? "LDO" : "DC-DC");
 
         /* TODO: For now, radio is initialized with some default values.
-         * This should be changed to configuration values nce configuration loading is completed.
+         * This should be changed to configuration values once configuration loading is completed.
          */
-        state = radioModule.begin(
+        state = radioInterface.begin(
             DEFAULT_LORA_FREQ,
             DEFAULT_LORA_BW,
             DEFAULT_LORA_SF,
@@ -54,7 +56,11 @@ bool RadioModule::initialize() {
         #else
             bool dio2AsRfSwitch = false;
         #endif
-        state = radioModule.setDio2AsRfSwitch(dio2AsRfSwitch);
+        state = radioInterface.setDio2AsRfSwitch(dio2AsRfSwitch);
         ESP_LOGD(TAG, "%s DIO2 as RF LoRa RF switch: %d", dio2AsRfSwitch ? "Setting" : "Not setting", state);
     #endif
+}
+
+PhysicalLayer* RadioModule::getRadioInterface() {
+    return &radioInterface;
 }
