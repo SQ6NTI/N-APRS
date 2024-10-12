@@ -4,10 +4,13 @@
 #include "configuration.h"
 #include "util.h"
 #include "modules/Modules.h"
+#include "Tasks.h"
 
+static const char* TAG = "main";
+
+/* TODO: remove these temp variables later on */
 unsigned long lastGNSSsend = 0;
 unsigned long lastAPRSsend = 0;
-static const char* TAG = "main";
 APRSClient *aprs;
 
 void setup() {
@@ -33,6 +36,7 @@ void setup() {
     #endif
 
     radioModule->initialize();
+    radioModule->rxCallback = &multitasking::Tasks::radioDataRx;
 
     stateModule->initialize();
     

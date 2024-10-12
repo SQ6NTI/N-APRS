@@ -7,7 +7,8 @@ static const char *const TAG = "RadioModule";
 RadioModule *radioModule;
 
 RadioModule::RadioModule() {
-
+    /* We store instance reference to ourself to handle ISR with interruptHandler() */
+    instance = this;
 }
 
 bool RadioModule::initialize() {
@@ -51,16 +52,29 @@ bool RadioModule::initialize() {
         if (state != RADIOLIB_ERR_NONE)
             return false;
 
-        #ifdef SX126X_DIO2_AS_RF_SWITCH
-            bool dio2AsRfSwitch = true;
-        #else
-            bool dio2AsRfSwitch = false;
+        #if defined(HAS_SX126X)
+            /* Any DIO1 interrupt will trigger the specified function */
+            radioInterface.setDio1Action(interruptHandler);
+
+            #ifdef SX126X_DIO2_AS_RF_SWITCH
+                bool dio2AsRfSwitch = true;
+            #else
+                bool dio2AsRfSwitch = false;
+            #endif
+            state = radioInterface.setDio2AsRfSwitch(dio2AsRfSwitch);
+            ESP_LOGD(TAG, "%s DIO2 as RF SX126x RF switch: %d", dio2AsRfSwitch ? "Setting" : "Unsetting", state);
         #endif
-        state = radioInterface.setDio2AsRfSwitch(dio2AsRfSwitch);
-        ESP_LOGD(TAG, "%s DIO2 as RF LoRa RF switch: %d", dio2AsRfSwitch ? "Setting" : "Not setting", state);
     #endif
 }
 
 PhysicalLayer* RadioModule::getRadioInterface() {
     return &radioInterface;
+}
+
+/* Interrupt Service Routine (ISR) is kept in IRAM to avoid calling FLASH during interrupt handling */
+IRAM_ATTR void RadioModule::interruptHandler(void) {
+    //instance->interruptReceived = true;
+    if (instance->radioInterface.checkIrq(RADIOLIB_IRQ_RX_DONE)) {
+        instance->rxCallback();
+    }
 }
