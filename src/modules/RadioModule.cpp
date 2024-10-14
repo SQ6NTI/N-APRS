@@ -1,14 +1,13 @@
 #include "configuration.h"
 #include "defaults.h"
+#include "util.h"
 #include "RadioModule.h"
 
 static const char *const TAG = "RadioModule";
 
-RadioModule *radioModule;
-
-RadioModule::RadioModule() {
-    /* We store instance reference to ourself to handle ISR with interruptHandler() */
-    instance = this;
+RadioModule::RadioModule(Scheduler aScheduler) {
+    this->aScheduler = aScheduler;
+    //tRadioRx = new Task(TASK_IMMEDIATE, TASK_FOREVER, []() { radioModule->receivePacket(); }, &aScheduler, false);
 }
 
 bool RadioModule::initialize() {
@@ -53,8 +52,10 @@ bool RadioModule::initialize() {
             return false;
 
         #if defined(HAS_SX126X)
-            /* Any DIO1 interrupt will trigger the specified function */
-            radioInterface.setDio1Action(interruptHandler);
+            /* This alternative to SX126x::setDio1Action(void (*func)()) would only work with ESP32.
+             * https://forum.arduino.cc/t/interrupt-in-class-esp32/1039326/12
+            */
+            //attachInterrupt(hal->pinToInterrupt(SX126X_IRQ), std::bind(&RadioModule::interruptHandler, this), hal->GpioInterruptRising);
 
             #ifdef SX126X_DIO2_AS_RF_SWITCH
                 bool dio2AsRfSwitch = true;
@@ -65,16 +66,30 @@ bool RadioModule::initialize() {
             ESP_LOGD(TAG, "%s DIO2 as RF SX126x RF switch: %d", dio2AsRfSwitch ? "Setting" : "Unsetting", state);
         #endif
     #endif
+
+    return true;
+}
+
+/* This is a workaround to a problem of attaching class member as interrupt handler INSIDE the class itself.
+ * https://forum.arduino.cc/t/interrupt-in-class-esp32/1039326/25
+*/
+void RadioModule::attachInterrupt(void (*callback)()) {
+    #if defined(HAS_SX126X)
+        radioInterface.setDio1Action(callback);
+        ESP_LOGD(TAG, "Interrupt handler attached to DIO1");
+    #endif
 }
 
 PhysicalLayer* RadioModule::getRadioInterface() {
     return &radioInterface;
 }
 
-/* Interrupt Service Routine (ISR) is kept in IRAM to avoid calling FLASH during interrupt handling */
-IRAM_ATTR void RadioModule::interruptHandler(void) {
-    //instance->interruptReceived = true;
-    if (instance->radioInterface.checkIrq(RADIOLIB_IRQ_RX_DONE)) {
-        instance->rxCallback();
+/* Interrupt Service Routine (ISR) is kept in IRAM to avoid calling FLASH during interrupt handling.
+ * Use inside non-capturing lambda, because this is not static.
+*/
+void IRAM_ATTR RadioModule::interruptHandler(void) {
+    if (radioInterface.checkIrq(RADIOLIB_IRQ_RX_DONE)) {
+        rxDoneCallback();
+        
     }
 }

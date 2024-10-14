@@ -4,9 +4,10 @@
 #include "configuration.h"
 #include "util.h"
 #include "modules/Modules.h"
-#include "Tasks.h"
 
 static const char* TAG = "main";
+
+Scheduler taskScheduler;
 
 /* TODO: remove these temp variables later on */
 unsigned long lastGNSSsend = 0;
@@ -15,8 +16,8 @@ APRSClient *aprs;
 
 void setup() {
     // Creates module class instances
-    deployModules();
-
+    deployModules(taskScheduler);
+    
     // TODO: temporary reference to serial for debugging aid
     Serial.begin(115200);
 
@@ -36,7 +37,8 @@ void setup() {
     #endif
 
     radioModule->initialize();
-    radioModule->rxCallback = &multitasking::Tasks::radioDataRx;
+    radioModule->attachInterrupt([]() { radioModule->interruptHandler(); });
+    
 
     stateModule->initialize();
     
