@@ -3,9 +3,9 @@
 #include "modules/Modules.h"
 
 /* TODO: Add remaining definitions */
-RadioModule *radioModule;
+RadioModule* radioModule;
 
-void deployModules(Scheduler aScheduler) {
+void deployModules(Scheduler* aScheduler) {
     i2cModule = new I2CModule();
     powerModule = new PowerModule();
     stateModule = new StateModule();

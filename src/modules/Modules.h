@@ -11,4 +11,4 @@
 /* TODO: Add remaining externs */
 extern RadioModule *radioModule;
 
-void deployModules(Scheduler aScheduler);
+void deployModules(Scheduler* aScheduler);

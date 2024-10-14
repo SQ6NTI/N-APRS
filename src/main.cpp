@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <esp_log.h>
+#include <TaskScheduler.h>
 
 #include "configuration.h"
 #include "util.h"
@@ -12,11 +13,11 @@ Scheduler taskScheduler;
 /* TODO: remove these temp variables later on */
 unsigned long lastGNSSsend = 0;
 unsigned long lastAPRSsend = 0;
-APRSClient *aprs;
+APRSClient* aprs;
 
 void setup() {
     // Creates module class instances
-    deployModules(taskScheduler);
+    deployModules(&taskScheduler);
     
     // TODO: temporary reference to serial for debugging aid
     Serial.begin(115200);
