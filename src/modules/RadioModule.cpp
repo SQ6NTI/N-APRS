@@ -1,13 +1,12 @@
 #include "configuration.h"
 #include "defaults.h"
-#include "util.h"
-#include "RadioModule.h"
+#include "modules/RadioModule.h"
 
 static const char *const TAG = "RadioModule";
 
-RadioModule::RadioModule(Scheduler aScheduler) {
+RadioModule::RadioModule(Scheduler* aScheduler) : tReceiver(aScheduler, this) {
     this->aScheduler = aScheduler;
-    //tRadioRx = new Task(TASK_IMMEDIATE, TASK_FOREVER, []() { radioModule->receivePacket(); }, &aScheduler, false);
+    //tRadioRx = new Task(TASK_IMMEDIATE, TASK_FOREVER, [this]() { this->receivePacket(); }, &aScheduler, false);
 }
 
 bool RadioModule::initialize() {
@@ -89,7 +88,16 @@ PhysicalLayer* RadioModule::getRadioInterface() {
 */
 void IRAM_ATTR RadioModule::interruptHandler(void) {
     if (radioInterface.checkIrq(RADIOLIB_IRQ_RX_DONE)) {
-        rxDoneCallback();
-        
+        tReceiver.enable();
     }
+}
+
+/* Constructor for the RadioModule's nested class Receiver */
+RadioModule::Receiver::Receiver(Scheduler* aScheduler, RadioModule* radioModule) : Task(TASK_IMMEDIATE, TASK_ONCE, aScheduler, false)  {
+    
+}
+
+/* Handler for receiving packets from radioInterface */
+bool RadioModule::Receiver::Callback() {
+
 }

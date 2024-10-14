@@ -1,5 +1,6 @@
 #pragma once
 
+#include <queue>
 #include <SPI.h>
 #include <esp_log.h>
 #include <RadioLib.h>
@@ -8,31 +9,29 @@
 
 class RadioModule {
     public:
-        /*class Receiver : Task {
-
-        };*/
-        RadioModule(Scheduler aScheduler);
-        static RadioModule *instance;
+        RadioModule(Scheduler* aScheduler);
         
-        bool Callback();
         bool initialize();
         void attachInterrupt(void (*callback)());
-        //void beginTask();
         PhysicalLayer* getRadioInterface();
-        void receivePacket();
-        void (*rxDoneCallback)();
         void interruptHandler(void);
-    protected:
 
+        class Receiver : public Task {
+            public:
+                Receiver(Scheduler* aScheduler, RadioModule* radioModule);
+                bool Callback();
+                String receivePacket();
+        } tReceiver;
+
+        static RadioModule* instance;
+    protected:
         #if defined(HAS_SX1268)
             SX1268 radioInterface = new Module(hal, SX126X_CS, SX126X_IRQ, SX126X_RESET, SX126X_BUSY);
         #elif defined(HAS_SX1262)
             SX1262 radioInterface = new Module(hal, SX126X_CS, SX126X_IRQ, SX126X_RESET, SX126X_BUSY);
         #endif
-        
         volatile bool interruptReceived = false;
     private:
-        Scheduler aScheduler;
-        Task tRadioRx;
-        RadioLibHal *hal = new ArduinoHal(spiModule->getRadioSPI(), spiModule->getRadioSPISettings());
+        Scheduler* aScheduler;
+        RadioLibHal* hal = new ArduinoHal(spiModule->getRadioSPI(), spiModule->getRadioSPISettings());
 };
