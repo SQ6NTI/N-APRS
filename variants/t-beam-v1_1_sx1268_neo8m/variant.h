@@ -40,5 +40,7 @@
 #define SX126X_BUSY                 RADIO_DIO2_PIN /* DIO2 is used as BUSY pin */
 #define SX126X_IRQ                  RADIO_DIO1_PIN /* DIO1 is used as IRQ pin */
 #define SX126X_RESET                RADIO_RST_PIN
+#undef SX126X_RXEN                      /* No RX Enable ping for this board */
+#undef SX126X_TXEN                      /* No TX Enable ping for this board */
 #define SX126X_DIO2_AS_RF_SWITCH
 #define SX126X_DIO3_TCXO_VOLTAGE    1.8 /* This may have no effect on this board as IO3 looks not connected */

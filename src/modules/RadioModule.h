@@ -23,6 +23,9 @@ class RadioModule {
                 String receivePacket();
         } tReceiver;
 
+        /* TODO: RX 
+        packet queue */
+
         static RadioModule* instance;
     protected:
         #if defined(HAS_SX1268)
