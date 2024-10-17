@@ -1,0 +1,108 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+message APRSMessage {
+    optional APRSPacketMeta metadata = 1;
+    LoRaAPRSPacket packet = 2;
+}
+
+message LoRaAPRSPacket {
+    /*
+     * LoRa APRS header that is by default: 0x3c 0xff 0x01
+     */
+    bytes header = 1;
+
+    TNC2APRSPacket packet = 2;
+}
+
+/* Example TNC-2 APRS packet: SQ6NTI>APLOX1-1:!0000.00N\00000.00W.Lora Tracker/iGate%
+ * Documentation: http://www.aprs.org/doc/APRS101.PDF
+*/
+message TNC2APRSPacket {
+    /*
+     * Raw data for the purpose of further processing
+     */
+    string raw_data = 1;
+
+    /*
+     * Source callsign from TNC-2 Source Path Header (1-9 bytes), example: SQ6NTI-5
+     */
+    string source = 2;
+
+    /*
+     * Destination callsign from TNC-2 Source Path Header (1-9 byte), example: SQ6NTI-6
+     */
+    string destination = 3;
+
+    /*
+     * Data Type Identifier (http://www.aprs.org/doc/APRS101.PDF chapter 5)
+     */
+    enum DataTypeIdentifier {
+        DTI_CURRENT_MIC_E = 1;      /* 0x1c */
+        DTI_OLD_MIC_E = 2;          /* 0x1d */
+        DTI_POS_NOTS_NOMSG;         /* !    */
+        /* TODO: add more */
+        DTI_MESSAGE = 19;           /* :    */
+        
+    }
+
+    /*
+     * Packet type
+     */
+    DataTypeIdentifier data_type = 4;
+
+
+}
+
+message APRSPacketMeta {
+    /*
+     * Stores seconds since 1970
+     */
+    optional fixed32 time = 1;
+
+    /*
+     * Stores frequency in MHz
+     */
+    optional float frequency = 2;
+
+    /*
+     * Stores bandwidth in kHz
+     */
+    optional float bandwidth = 3;
+
+    /*
+     * Stores Coding Rate (CF) denominator (4/n)
+     */
+    optional uint32 coding_rate = 4;
+
+    /*
+     * Stores Spreading Factor (SF)
+     */
+    optional uint32 spreading_factor = 5;
+
+    /*
+     * Stores transmitted packet power in dBm
+     */
+    optional sint32 tx_power = 6;
+
+    /*
+     * Stores received packet RSSI in dBm
+     */
+    optional float rx_rssi = 7;
+
+    /*
+     * Stores received packet SNR in dB
+     */
+    optional float rx_snr = 8;
+
+    /*
+     * Stores received packet frequency error in Hz
+     */
+    optional float rx_frequency_error = 9;
+
+    /*
+     * Stores received CRC calculation result
+     */
+    optional bool rx_crc_status = 10;
+}
