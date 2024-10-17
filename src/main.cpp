@@ -39,6 +39,7 @@ void setup() {
 
     radioModule->initialize();
     radioModule->attachInterrupt([]() { radioModule->interruptHandler(); });
+    radioModule->startReceive();
     
 
     stateModule->initialize();

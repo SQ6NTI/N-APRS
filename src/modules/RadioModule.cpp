@@ -144,9 +144,18 @@ bool RadioModule::initialize() {
     return state == RADIOLIB_ERR_NONE;
 }
 
-/* This is a workaround to a problem of attaching class member as interrupt handler INSIDE the class itself.
- * https://forum.arduino.cc/t/interrupt-in-class-esp32/1039326/25
-*/
+bool RadioModule::startReceive() {
+    int16_t state = radioInterface.startReceive();
+
+    if (state != RADIOLIB_ERR_NONE) {
+        ESP_LOGE(TAG, "Error: Receive start failed with code: %d", state);
+        receiving = false;
+    }
+
+    receiving = true;
+    return receiving;
+}
+
 void RadioModule::attachInterrupt(void (*callback)()) {
     #if defined(HAS_SX126X)
         radioInterface.setDio1Action(callback);
@@ -158,21 +167,27 @@ PhysicalLayer* RadioModule::getRadioInterface() {
     return &radioInterface;
 }
 
-/* Interrupt Service Routine (ISR) is kept in IRAM to avoid calling FLASH during interrupt handling.
- * Use inside non-capturing lambda, because this is not static.
-*/
 void IRAM_ATTR RadioModule::interruptHandler(void) {
     if (radioInterface.checkIrq(RADIOLIB_IRQ_RX_DONE)) {
+        /* Packet received, enable Receiver to fetch it into the queue */
         tReceiver.enable();
     }
 }
 
 /* Constructor for the RadioModule's nested class Receiver */
 RadioModule::Receiver::Receiver(Scheduler* aScheduler, RadioModule* radioModule) : Task(TASK_IMMEDIATE, TASK_ONCE, aScheduler, false)  {
-    
+    this->radioModule = radioModule;
 }
 
 /* Handler for receiving packets from radioInterface */
 bool RadioModule::Receiver::Callback() {
+    String data;
+    float rssi = radioModule->radioInterface.getRSSI();
+    float snr = radioModule->radioInterface.getSNR();
+    float freqError = radioModule->radioInterface.getFrequencyError();
+    /* TODO: Capture time of reception */
+    int16_t state = radioModule->radioInterface.readData(data);
 
+
+    return true;
 }
