@@ -43,9 +43,9 @@ void GPSModule::checkPosition() {
     currentPosition.longitude = 170156686; /* 17.0156686 deg E */
     currentPosition.altitude = 168836; /* 168.836 m */
     currentPosition.time = 1728160247; /* Sat Oct 05 2024 20:30:47 GMT+0000 */
-    currentPosition.PDOP = 1236; /* PDOP = 12.36 */
-    currentPosition.HDOP = 650; /* HDOP = 6.5 */
-    currentPosition.VDOP = 1052; /* VDOP = 10.52 */
+    currentPosition.pdop = 1236; /* PDOP = 12.36 */
+    currentPosition.hdop = 650; /* HDOP = 6.5 */
+    currentPosition.vdop = 1052; /* VDOP = 10.52 */
     currentPosition.ground_speed = 1425; /* 1.425 m */
     currentPosition.heading = 9492034; /* 94.92034 deg */
     currentPosition.fix_type = 3; /* 3D fix */
@@ -89,9 +89,9 @@ void GPSModule::checkPosition() {
     ESP_LOGD(TAG, "Lon : %d", currentPosition.longitude);
     ESP_LOGD(TAG, "Alt : %d", currentPosition.altitude);
     ESP_LOGD(TAG, "Unix: %d", currentPosition.time);
-    ESP_LOGD(TAG, "PDOP: %d", currentPosition.PDOP);
-    ESP_LOGD(TAG, "HDOP: %d", currentPosition.HDOP);
-    ESP_LOGD(TAG, "VDOP: %d", currentPosition.VDOP);
+    ESP_LOGD(TAG, "PDOP: %d", currentPosition.pdop);
+    ESP_LOGD(TAG, "HDOP: %d", currentPosition.hdop);
+    ESP_LOGD(TAG, "VDOP: %d", currentPosition.vdop);
     ESP_LOGD(TAG, "Gspd: %d", currentPosition.ground_speed);
     ESP_LOGD(TAG, "Head: %d", currentPosition.heading);
     ESP_LOGD(TAG, "FixT: %d", currentPosition.fix_type);
