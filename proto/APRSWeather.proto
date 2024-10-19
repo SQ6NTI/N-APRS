@@ -1,0 +1,70 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+import "APRSTimestamp.proto";
+
+/*
+ * APRS Weather Report data format (http://www.aprs.org/doc/APRS101.PDF appendix 1)
+ */
+message APRSWeather {
+    enum Variant {
+        V_RAW = 0;           /* Raw Weather Report Format */
+        V_PL_WD = 1;         /* Positionless Weather Report Format */
+        V_COMPLETE = 2;      /* Complete Weather Report Format — with Lat/Long position, no Timestamp */
+        V_COMPLETE_TS = 3;   /* Complete Weather Report Format — with Lat/Long position and Timestamp */
+        V_COMP = 4;          /* Complete Weather Report Format — with Compressed Lat/Long position, no Timestamp */
+        V_COMP_TS = 5;       /* Complete Weather Report Format — with Compressed Lat/Long position, with Timestamp */
+        V_OBJ = 6;           /* Complete Weather Report Format — with Object and Lat/Long position */
+    }
+
+    Variant variant = 1;
+
+    /*
+     * Stores object name (9 bytes)
+     */
+    optional string name = 2;
+
+    optional APRSTimestamp timestamp = 3;
+
+    /*
+     * Stores latitude in APRS format (fixed 8 bytes)
+     * Example for unknown position: 0000.00N
+     * Example for valid position:   5107.00N
+     * Example for valid position:   5107.00S
+     */
+    optional string latitude = 4;
+
+    optional string compressed_latitude = 5;
+
+    /*
+     * Stores longitude in APRS format (fixed 9 bytes)
+     * Example for unknown position: 00000.00W
+     * Example for valid position:   01659.82E
+     * Example for valid position:   01659.82W
+     */
+    optional string longitude = 6;
+
+    optional string compressed_longitude = 7;
+
+    /*
+     * 1-byte Symbol Table Identifier (http://www.aprs.org/doc/APRS101.PDF chapter 20 and appendix 2)
+     */
+    optional bytes symbol_table = 8;
+
+    /*
+     * 1-byte Symbol Code (http://www.aprs.org/doc/APRS101.PDF chapter 20 and appendix 2)
+     */
+    optional bytes symbol_code = 9;
+
+    optional string wind_dir_spd = 10;
+
+    optional string compressed_wind_spd_dir = 11;
+
+    /*
+     * Stores weather data or raw_weather data for V_RAW
+     */
+    optional string data = 12;
+
+    optional bytes compression_type = 13;
+}

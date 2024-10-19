@@ -1,0 +1,26 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+import "TNC2Callsign.proto";
+
+/* As defined in Section 17 of http://www.aprs.org/doc/APRS101.PDF
+ * Example: SQ6NTI-5>APLN01,WIDE1-1:
+ * Example: SQ6NTI-5>APLN01-2:
+ */
+message TNC2SourcePathHeader {
+    /*
+     * Source callsign (1-9 bytes), example: SQ6NTI-5
+     */
+    TNC2Callsign source = 1;
+
+    /*
+     * Destination callsign (1-9 bytes), example: APLN01
+     */
+    TNC2Callsign destination = 2;
+
+    /*
+     * Digipeaters path or special path like WIDE1-1
+     */
+    repeated TNC2Callsign path = 3;
+}

@@ -68,17 +68,17 @@ message Position {
      * Position Dilution of Precision (multiply by 1e-2 to get floating point value)
      * Can be calculated from HDOP and VDOP: PDOP=sqrt(HDOP^2 + VDOP^2)
      */
-    uint32 PDOP = 9;
+    uint32 pdop = 9;
 
     /*
      * Horizontal Dilution of Precision (multiply by 1e-2 to get floating point value)
      */
-    uint32 HDOP = 10;
+    uint32 hdop = 10;
 
     /*
      * Vertical Dilution of Precision (multiply by 1e-2 to get floating point value)
      */
-    uint32 VDOP = 11;
+    uint32 vdop = 11;
 
     /*
      * Ground speed in mm/s (multiply by 1e-3 to get floating point value in meters)

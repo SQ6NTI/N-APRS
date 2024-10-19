@@ -1,0 +1,21 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+import "TNC2APRSPacket.proto";
+
+/* This is payload fo the LoRa PHY frame
+ * Max size is 255 bytes as per LoRa standard
+ */
+message LoRaAPRSPacket {
+    /*
+     * LoRa APRS header that is by default the following 3 bytes: 0x3c 0xff 0x01
+     */
+    bytes header = 1;
+
+    /*
+    * Whole APRS packet formatted as TNC-2 frame
+    * Due to LoRa header being 3 bytes, max size is 255-3=252 bytes
+    */
+    TNC2APRSPacket packet = 2;
+}

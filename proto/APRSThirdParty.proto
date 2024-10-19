@@ -1,0 +1,27 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+import "TNC2Callsign.proto";
+
+/*
+ * APRS third-party format (http://www.aprs.org/doc/APRS101.PDF appendix 1)
+ */
+message APRSThirdParty {
+    /*
+     * Source Path Header (without “unused” digipeaters, * or : markers)
+     */
+    optional string TNC2SourcePathHeader = 1;
+
+    /*
+     * Third-party network identifier - callsign (1-9 bytes)
+     */
+    optional TNC2Callsign tp_network = 2;
+
+    /*
+     * Receiving gateway station optionally with SSID (1-9 bytes)
+     */
+    optional TNC2Callsign gateway = 3;
+
+    optional string original_data = 4;
+}

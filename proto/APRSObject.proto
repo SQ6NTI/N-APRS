@@ -1,0 +1,57 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+import "APRSTimestamp.proto";
+
+/*
+ * APRS Object Report data format (http://www.aprs.org/doc/APRS101.PDF appendix 1)
+ */
+message APRSObject {
+    enum Variant {
+        V_OBJ = 0;           /* Object Report Format — with Lat/Long position */
+        V_OBJ_COMP = 1;      /* Object Report Format — with Compressed Lat/Long position */
+        V_ITEM = 2;          /* Item Report Format — with Lat/Long position */
+        V_ITEM_COMP = 3;     /* Item Report Format — with Compressed Lat/Long position */
+    }
+
+    Variant variant = 1;
+
+    /*
+     * Stores object or item name (3-9 bytes)
+     */
+    string name = 2;
+
+    optional APRSTimestamp timestamp = 3;
+
+    /*
+     * Stores latitude in APRS format (fixed 8 bytes)
+     * Example for unknown position: 0000.00N
+     * Example for valid position:   5107.00N
+     * Example for valid position:   5107.00S
+     */
+    optional string latitude = 4;
+
+    /*
+     * Stores longitude in APRS format (fixed 9 bytes)
+     * Example for unknown position: 00000.00W
+     * Example for valid position:   01659.82E
+     * Example for valid position:   01659.82W
+     */
+    optional string longitude = 5;
+
+    optional string compressed_position = 6;
+
+    /*
+     * 1-byte Symbol Table Identifier (http://www.aprs.org/doc/APRS101.PDF chapter 20 and appendix 2)
+     * Options: * or _ or !
+     */
+    bytes symbol_table = 7;
+
+    /*
+     * 1-byte Symbol Code (http://www.aprs.org/doc/APRS101.PDF chapter 20 and appendix 2)
+     */
+    bytes symbol_code = 8;
+
+    optional string data_extension = 9;
+}

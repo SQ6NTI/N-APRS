@@ -1,0 +1,39 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+import "APRSTimestamp.proto";
+
+/*
+ * APRS Direction Finding (DF) data format (http://www.aprs.org/doc/APRS101.PDF appendix 1)
+ */
+message APRSDirFinding {
+    enum Variant {
+        V_DF_REPORT = 0;        /* DF Report Format — without Timestamp */
+        V_DF_REPORT_TS = 1;     /* DF Report Format — with Timestamp */
+    }
+
+    Variant variant = 1;
+
+    optional APRSTimestamp timestamp = 2;
+
+    /*
+     * Stores latitude in APRS format (fixed 8 bytes)
+     * Example for unknown position: 0000.00N
+     * Example for valid position:   5107.00N
+     * Example for valid position:   5107.00S
+     */
+    optional string latitude = 3;
+
+    /*
+     * Stores longitude in APRS format (fixed 9 bytes)
+     * Example for unknown position: 00000.00W
+     * Example for valid position:   01659.82E
+     * Example for valid position:   01659.82W
+     */
+    optional string longitude = 4;
+
+    optional string data_extension = 5;
+
+    optional string df_report = 6;
+}

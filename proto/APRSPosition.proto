@@ -1,0 +1,68 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+import "APRSTimestamp.proto";
+
+/*
+ * APRS Position data format (http://www.aprs.org/doc/APRS101.PDF appendix 1)
+ */
+message APRSPosition {
+    enum Variant {
+        V_BASIC = 0;            /* Lat/Long Position Report Format — without Timestamp */
+        V_BASIC_TS = 1;         /* Lat/Long Position Report Format — with Timestamp */
+        V_BASIC_DE = 2;         /* Lat/Long Position Report Format — with Data Extension (no Timestamp) */
+        V_BASIC_DE_TS = 3;      /* Lat/Long Position Report Format — with Data Extension and Timestamp */
+        V_LOCATOR = 4;          /* Maidenhead Locator Beacon */
+        V_NMEA = 5;             /* Raw NMEA Position Report Format */
+        V_DF_REPORT = 6;        /* DF Report Format — without Timestamp */
+        V_DF_REPORT_TS = 7;     /* DF Report Format — with Timestamp */
+        V_COMP = 8;             /* Compressed Lat/Long Position Report Format — no Timestamp */
+        V_COMP_TS = 9;          /* Compressed Lat/Long Position Report Format — with Timestamp */
+
+    }
+
+    Variant variant = 1;
+
+    optional APRSTimestamp timestamp = 2;
+
+    /*
+     * Stores latitude in APRS format (fixed 8 bytes)
+     * Example for unknown position: 0000.00N
+     * Example for valid position:   5107.00N
+     * Example for valid position:   5107.00S
+     */
+    optional string latitude = 3;
+
+    optional string compressed_latitude = 4;
+
+    /*
+     * Stores longitude in APRS format (fixed 9 bytes)
+     * Example for unknown position: 00000.00W
+     * Example for valid position:   01659.82E
+     * Example for valid position:   01659.82W
+     */
+    optional string longitude = 5;
+
+    optional string compressed_longitude = 6;
+
+    /*
+     * 1-byte Symbol Table Identifier (http://www.aprs.org/doc/APRS101.PDF chapter 20 and appendix 2)
+     */
+    optional bytes symbol_table = 7;
+
+    /*
+     * 1-byte Symbol Code (http://www.aprs.org/doc/APRS101.PDF chapter 20 and appendix 2)
+     */
+    optional bytes symbol_code = 8;
+
+    optional string data_extension = 9;
+
+    optional string compressed_data_extension = 10;
+
+    optional string grid_locator = 11;
+
+    optional string nmea_sentence = 12;
+
+    optional bytes compression_type = 13;
+}

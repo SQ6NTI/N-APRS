@@ -1,0 +1,67 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+import "TNC2SourcePathHeader.proto";
+import "APRSPosition.proto";
+import "APRSDirFinding.proto";
+import "APRSObject.proto";
+import "APRSWeather.proto";
+import "APRSTelemetry.proto";
+import "APRSMessage.proto";
+import "APRSQuery.proto";
+import "APRSStatus.proto";
+import "APRSThirdParty.proto";
+import "APRSUserFormat.proto";
+
+/* Example TNC-2 APRS packet: SQ6NTI>APLOX1-1:!0000.00N\00000.00W.Lora Tracker/iGate%
+ * Documentation: http://www.aprs.org/doc/APRS101.PDF
+*/
+message TNC2APRSPacket {
+    /*
+     * Data Type Identifier (http://www.aprs.org/doc/APRS101.PDF chapter 17)
+     */
+    TNC2SourcePathHeader header = 1;
+
+    /*
+     * 1-byte Data Type Identifier (http://www.aprs.org/doc/APRS101.PDF chapter 5)
+     */
+    bytes data_type_identifier = 2;
+
+    /*
+     * List of implemented APRS data types
+     * As per http://www.aprs.org/doc/APRS101.PDF chapter 5
+     */
+    enum DataType {
+        DT_POSITION = 0;        /* Position */
+        DT_DIR_FINDING = 1;     /* Direction Finding */
+        DT_OBJECT = 2;          /* Objects and Items */
+        DT_WEATHER = 3;         /* Weather */
+        DT_TELEMETRY = 4;       /* Telemetry */
+        DT_MESSAGE = 5;         /* Messages, Bulletins and Announcements */
+        DT_QUERY = 6;           /* Queries */
+        DT_STATUS = 7;          /* Status */
+        DT_OTHER = 8;           /* Other */
+    }
+
+    /*
+     * APRS data type for the purpose of deciding which field is used next
+     * As per http://www.aprs.org/doc/APRS101.PDF chapter 5
+     */
+    DataType data_type = 3;
+
+    optional APRSPosition aprs_position = 4;
+    optional APRSDirFinding aprs_dir_finding = 5;
+    optional APRSObject aprs_object = 6;
+    optional APRSWeather aprs_weather = 7;
+    optional APRSTelemetry aprs_telemetry = 8;
+    optional APRSMessage aprs_message = 9;
+    optional APRSQuery aprs_query = 10;
+    optional APRSStatus aprs_status = 11;
+    optional APRSThirdParty aprs_third_party = 12;
+    optional APRSUserFormat aprs_other = 13;
+
+    /* TODO: implement the defined data types from http://www.aprs.org/doc/APRS101.PDF */
+
+    optional string comment = 14;
+}

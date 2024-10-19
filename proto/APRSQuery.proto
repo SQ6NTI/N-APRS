@@ -1,0 +1,29 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+/*
+ * APRS Query data format (http://www.aprs.org/doc/APRS101.PDF appendix 1)
+ */
+message APRSQuery {
+    enum Variant {
+        V_GENERAL = 0;           /* General Query Format */
+        V_DIRECTED = 1;          /* Directed Station Query Format */
+    }
+
+    Variant variant = 1;
+
+    /*
+     * 9-byte addressee
+     */
+    optional string addressee = 2;
+
+    optional string query_type = 3;
+
+    optional string target_footprint = 4;
+
+    /*
+     * Callsign of Heard Station (0-9 bytes)
+     */
+    optional string hs_callsign = 5;
+}

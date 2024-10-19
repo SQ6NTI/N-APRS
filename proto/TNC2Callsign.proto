@@ -1,0 +1,26 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+/* As defined in Section 17 of http://www.aprs.org/doc/APRS101.PDF
+ * TNC2Callsign varies in size between min 1 and max 9 bytes
+ * Example (usual callsign with SSID): SQ6NTI-5
+ * Example (simple destination callsign): APLN01
+ * Example (destination callsign with compressed hop limit of 2): APLN01-2
+ */
+message TNC2Callsign {
+    /*
+     * Actual callsign (without SSID)
+     */
+    string callsign = 1;
+
+    /*
+     * SSID value (it is like a network port)
+     */
+    uint32 ssid = 2;
+
+    /*
+     * When TNC2Callsign is used in a digi path, it allows to specify :used" marker/flag for each path element
+     */
+    optional bool used_flag = 3;
+}

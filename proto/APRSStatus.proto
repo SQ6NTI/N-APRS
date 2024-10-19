@@ -1,0 +1,36 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+import "APRSTimestamp.proto";
+
+/*
+ * APRS Status Report data format (http://www.aprs.org/doc/APRS101.PDF appendix 1)
+ */
+message APRSStatus {
+    enum Variant {
+        V_BASIC = 0;           /* Status Report Format */
+        V_LOCATOR = 1;         /* Status Report Format — with Maidenhead Grid Locator */
+    }
+
+    Variant variant = 1;
+
+    optional APRSTimestamp timestamp = 2;
+
+    /*
+     * 6-byte Maidenhead Locator: GGnngg
+     */
+    optional string locator = 3;
+
+    /*
+     * 1-byte Symbol Table Identifier (http://www.aprs.org/doc/APRS101.PDF chapter 20 and appendix 2)
+     */
+    optional bytes symbol_table = 4;
+
+    /*
+     * 1-byte Symbol Code (http://www.aprs.org/doc/APRS101.PDF chapter 20 and appendix 2)
+     */
+    optional bytes symbol_code = 5;
+
+    optional string text = 6;
+}

@@ -1,0 +1,60 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+/*
+ * APRS Message Report data format (http://www.aprs.org/doc/APRS101.PDF appendix 1)
+ */
+message APRSMessage {
+    enum Variant {
+        V_MESSAGE = 0;           /* Message Format */
+        V_MESSAGE_ACK = 1;       /* Message Acknowledgement Format */
+        V_MESSAGE_REJ = 2;       /* Message Rejection Format */
+        V_BULLETIN = 3;          /* General Bulletin Format */
+        V_ANNOUNCEMENT = 4;      /* Announcement Format */
+        V_GR_BULLETIN = 5;       /* Group Bulletin Format */
+        V_NWS = 6;               /* National Weather Service Bulletin Format */
+    }
+
+    Variant variant = 1;
+
+    /*
+     * 1-byte Symbol Table Identifier (http://www.aprs.org/doc/APRS101.PDF chapter 20 and appendix 2)
+     */
+    bytes symbol_table = 2;
+
+    /*
+     * 9-byte addressee or NWS destination
+     */
+    string addressee = 3;
+
+    /*
+     * 1-byte Symbol Code (http://www.aprs.org/doc/APRS101.PDF chapter 20 and appendix 2)
+     */
+    bytes symbol_code = 4;
+
+    /*
+     * 3-byte sring "ack" or "rej"
+     */
+    optional string status = 5;
+
+    /*
+     * 1-5 bytes specifying message number
+     */
+    optional string message_no = 6;
+
+    /*
+     * 1-byte bulletin or announcement identifier
+     */
+    optional bytes identifier = 7;
+
+    /*
+     * 5-byte bulletin group name
+     */
+    optional bytes group_name = 8;
+
+    /*
+     * Message, bulletin or announcement text
+     */
+    optional string text = 9; 
+} 

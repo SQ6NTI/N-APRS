@@ -1,0 +1,10 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+/*
+ * APRS Telemetry Report data format (http://www.aprs.org/doc/APRS101.PDF appendix 1)
+ */
+message APRSTelemetry {
+    /* TODO: implement */
+}

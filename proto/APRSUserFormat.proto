@@ -1,0 +1,23 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+/*
+ * APRS user-defined format (http://www.aprs.org/doc/APRS101.PDF appendix 1)
+ */
+message APRSUserFormat {
+    /*
+     * 1-byte user ID
+     */
+    bytes user_id = 1;
+
+    /*
+     * 1-byte user-defined packet type
+     */
+    bytes packet_type = 2;
+
+    /*
+     * User-defined data (printable ASCII recommended)
+     */
+    bytes data = 3;
+}

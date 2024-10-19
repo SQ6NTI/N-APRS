@@ -1,0 +1,34 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+/*
+ * APRS timestamp
+ * As per http://www.aprs.org/doc/APRS101.PDF chapter 6
+ */
+message APRSTimestamp {
+    enum TimeFormat {
+        TF_DHM = 0;     /* Day/Hours/Minutes */
+        TF_HMS = 1;     /* Hours/Minutes/Seconds */
+        TF_MDHM = 2;    /* Month/Day/Hours/Minutes */
+    }
+
+    /*
+     * APRS time format for the purpose of decoding timestamp
+     */
+    TimeFormat time_format = 1;
+
+    /*
+     * Timestamp defined by the time_format
+     * Example: 092345z is in TF_DHM format (fixed 7 bytes)
+     * Example: 234517h is in TF_HMS format (fixed 7 bytes)
+     * Example: 10092345 is in TF_MDHM (fixed 8 bytes)
+     */
+    string timestamp = 2;
+
+    /*
+     * Should be set based on last character of TF_DHM format (either "z" for zulu or "/" for local)
+     * Example: 092345z would mean zulu = true
+     */
+    bool zulu_flag = 3;
+}
