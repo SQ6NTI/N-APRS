@@ -1,0 +1,55 @@
+syntax = "proto3";
+/* Language guide: https://protobuf.dev/programming-guides/proto3/ */
+/* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
+
+message LoRaPacketMeta {
+    /*
+     * Stores seconds since 1970
+     */
+    optional fixed32 time = 1;
+
+    /*
+     * Stores frequency in MHz
+     */
+    optional float frequency = 2;
+
+    /*
+     * Stores bandwidth in kHz
+     */
+    optional float bandwidth = 3;
+
+    /*
+     * Stores Coding Rate (CF) denominator (4/n)
+     */
+    optional uint32 coding_rate = 4;
+
+    /*
+     * Stores Spreading Factor (SF)
+     */
+    optional uint32 spreading_factor = 5;
+
+    /*
+     * Stores transmitted packet power in dBm
+     */
+    optional sint32 tx_power = 6;
+
+    /*
+     * Stores received packet RSSI in dBm
+     */
+    optional float rx_rssi = 7;
+
+    /*
+     * Stores received packet SNR in dB
+     */
+    optional float rx_snr = 8;
+
+    /*
+     * Stores received packet frequency error in Hz
+     */
+    optional float rx_frequency_error = 9;
+
+    /*
+     * Stores received CRC calculation result
+     */
+    optional bool rx_crc_status = 10;
+}

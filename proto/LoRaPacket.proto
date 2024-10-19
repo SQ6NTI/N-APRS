@@ -3,9 +3,8 @@ syntax = "proto3";
 /* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
 
 import "LoRaPacketMeta.proto";
-import "LoRaAPRSPacket.proto";
 
-message LoRaAPRSMetaPacket {
+message LoRaPacket {
     optional LoRaPacketMeta metadata = 1;
-    LoRaAPRSPacket packet = 2;
+    bytes packet = 2;
 }
