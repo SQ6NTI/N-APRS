@@ -11,4 +11,5 @@ void deployModules(Scheduler* aScheduler) {
     stateModule = new StateModule();
     gpsModule = new GPSModule();
     radioModule = new RadioModule(aScheduler);
+    aprsModule = new APRSModule();
 }
