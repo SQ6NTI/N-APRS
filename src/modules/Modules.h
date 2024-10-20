@@ -10,6 +10,10 @@
 #include "modules/APRSModule.h"
 
 /* TODO: Add remaining externs */
+extern I2CModule* i2cModule;
+extern PowerModule *powerModule;
+extern StateModule *stateModule;
+extern GPSModule* gpsModule;
 extern RadioModule* radioModule;
 extern APRSModule* aprsModule;
 

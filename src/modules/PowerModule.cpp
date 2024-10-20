@@ -8,8 +8,6 @@ static const char *const TAG = "PowerModule";
     AXP20X_Class axp;
 #endif
 
-PowerModule *powerModule;
-
 PowerModule::PowerModule() {
     
 }

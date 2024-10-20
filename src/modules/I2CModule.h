@@ -11,4 +11,3 @@ class I2CModule {
     private:
 };
 
-extern I2CModule *i2cModule;

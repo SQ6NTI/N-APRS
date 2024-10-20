@@ -6,17 +6,19 @@ static const char *const TAG = "GPSModule";
 
 HardwareSerial GPSModule::gpsSerial(1);
 
-GPSModule *gpsModule;
-
 GPSModule::GPSModule() {
     currentPosition = Position_init_default;
 }
 
-bool GPSModule::initialize() {
-    #if defined(HAS_PMU)
-        powerModule->gpsOn();
-    #endif
+#if defined(HAS_PMU)
+bool GPSModule::initialize(PowerModule* powerModule) {
+    this->powerModule = powerModule;
+    this->powerModule->gpsOn();
+    return initialize();
+}
+#endif
 
+bool GPSModule::initialize() {
     ESP_LOGD(TAG, "Initializing serial for GPS");
     gpsSerial.begin(GPS_BAUD_RATE, SERIAL_8N1, GPS_RX_PIN, GPS_TX_PIN);
 

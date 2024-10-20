@@ -4,8 +4,6 @@
 
 static const char *const TAG = "StateModule";
 
-StateModule *stateModule;
-
 StateModule::StateModule() {
 
 }

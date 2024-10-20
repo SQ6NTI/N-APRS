@@ -5,8 +5,6 @@
 
 static const char *const TAG = "I2CModule";
 
-I2CModule *i2cModule;
-
 I2CModule::I2CModule() {
 
 }

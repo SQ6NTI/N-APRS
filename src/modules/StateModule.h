@@ -15,5 +15,3 @@ class StateModule {
     private:
     
 };
-
-extern StateModule *stateModule;

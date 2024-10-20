@@ -13,5 +13,3 @@ class PowerModule {
     protected:
     private:
 };
-
-extern PowerModule *powerModule;
