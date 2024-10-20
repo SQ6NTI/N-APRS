@@ -4,7 +4,8 @@
 
 static const char *const TAG = "RadioModule";
 
-RadioModule::RadioModule(Scheduler* aScheduler) : tReceiver(aScheduler, this) {
+RadioModule::RadioModule(Scheduler* aScheduler)
+        : tReceiver(aScheduler, this), tTransmitter(aScheduler, this) {
     this->aScheduler = aScheduler;
     //tRadioRx = new Task(TASK_IMMEDIATE, TASK_FOREVER, [this]() { this->receivePacket(); }, &aScheduler, false);
 }
@@ -170,24 +171,91 @@ PhysicalLayer* RadioModule::getRadioInterface() {
 void IRAM_ATTR RadioModule::interruptHandler(void) {
     if (radioInterface.checkIrq(RADIOLIB_IRQ_RX_DONE)) {
         /* Packet received, enable Receiver to fetch it into the queue */
-        tReceiver.enable();
+        tReceiver.restart();
     }
 }
 
-/* Constructor for the RadioModule's nested class Receiver */
-RadioModule::Receiver::Receiver(Scheduler* aScheduler, RadioModule* radioModule) : Task(TASK_IMMEDIATE, TASK_ONCE, aScheduler, false)  {
+/* Constructor for the RadioModule's nested class Transmitter */
+RadioModule::Transmitter::Transmitter(Scheduler* aScheduler, RadioModule* radioModule)
+        : Task(TASK_IMMEDIATE, TASK_ONCE, aScheduler, false) {
     this->radioModule = radioModule;
+    loraPacket = LoRaPacket_init_default;
+}
+
+/* Handler for transmitting packets from radioInterface */
+bool RadioModule::Transmitter::Callback() {
+    int16_t state = RADIOLIB_ERR_NONE;
+
+    ESP_LOGD(TAG, "Transmitter callback started, transmitting %d bytes", loraPacket.data.size);
+    
+    state = radioModule->radioInterface.startTransmit(loraPacket.data.bytes, loraPacket.data.size);
+    if (state != RADIOLIB_ERR_NONE) {
+        ESP_LOGE(TAG, "Error: Packet transmit failed with code: %d", state);
+        return false;
+    }
+
+    return true;
+}
+
+bool RadioModule::Transmitter::OnEnable() {
+    ESP_LOGD(TAG, "Transmitter enabled");
+    return true;
+}
+
+void RadioModule::Transmitter::OnDisable() {
+    ESP_LOGD(TAG, "Transmitter disabled");
+}
+
+void RadioModule::Transmitter::setPacket(LoRaPacket loraPacket) {
+    this->loraPacket = loraPacket;
+    ESP_LOGD(TAG, "Packet (len: %d): %s", loraPacket.data.size, loraPacket.data.bytes);
+}
+
+/* Constructor for the RadioModule's nested class Receiver */
+RadioModule::Receiver::Receiver(Scheduler* aScheduler, RadioModule* radioModule)
+        : Task(TASK_IMMEDIATE, TASK_ONCE, aScheduler, false) {
+    this->radioModule = radioModule;
+    loraPacket = LoRaPacket_init_default;
 }
 
 /* Handler for receiving packets from radioInterface */
 bool RadioModule::Receiver::Callback() {
-    String data;
-    float rssi = radioModule->radioInterface.getRSSI();
-    float snr = radioModule->radioInterface.getSNR();
-    float freqError = radioModule->radioInterface.getFrequencyError();
-    /* TODO: Capture time of reception */
-    int16_t state = radioModule->radioInterface.readData(data);
+    int16_t state = RADIOLIB_ERR_NONE;
+    size_t length;
+    //uint8_t buffer[256];
+    //String packet;
 
+    ESP_LOGD(TAG, "Receiver callback started");
+
+    loraPacket.metadata.rx_rssi = radioModule->radioInterface.getRSSI();
+    loraPacket.metadata.rx_snr = radioModule->radioInterface.getSNR();
+    loraPacket.metadata.rx_frequency_error = radioModule->radioInterface.getFrequencyError();
+    /* TODO: Capture time of reception */
+
+    length = radioModule->radioInterface.getPacketLength();
+    assert((length <= sizeof(loraPacket.data.bytes)));
+    //state = radioModule->radioInterface.readData(buffer, length);
+    //state = radioModule->radioInterface.readData(packet);
+    state = radioModule->radioInterface.readData(loraPacket.data.bytes, length);
+    if (state != RADIOLIB_ERR_NONE) {
+        ESP_LOGE(TAG, "Error: Packet receive failed with code: %d", state);
+        return false;
+    }
+    //memcpy(loraPacket.data.bytes, packet.c_str(), length);
+
+    ESP_LOGD(TAG, "RSSI: %f dBm, SNR: %f dB, Freq err: %f Hz",
+        loraPacket.metadata.rx_rssi, loraPacket.metadata.rx_snr, loraPacket.metadata.rx_frequency_error);
+
+    ESP_LOGD(TAG, "Packet: %s", loraPacket.data.bytes);
 
     return true;
+}
+
+bool RadioModule::Receiver::OnEnable() {
+    ESP_LOGD(TAG, "Receiver enabled");
+    return true;
+}
+
+void RadioModule::Receiver::OnDisable() {
+    ESP_LOGD(TAG, "Receiver disabled");
 }

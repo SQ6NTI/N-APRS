@@ -1,11 +1,14 @@
 #pragma once
 
+#include <assert.h>
 #include <queue>
 #include <SPI.h>
 #include <esp_log.h>
 #include <RadioLib.h>
 #include <TaskSchedulerDeclarations.h>
+
 #include "modules/SPIModule.h"
+#include "LoRaPacket.pb.h"
 
 class RadioModule {
     public:
@@ -40,13 +43,26 @@ class RadioModule {
             public:
                 Receiver(Scheduler* aScheduler, RadioModule* radioModule);
                 bool Callback();
-                String receivePacket();
+                bool OnEnable();
+                void OnDisable();
             private:
                 RadioModule* radioModule;
+                LoRaPacket loraPacket;
         } tReceiver;
 
-        /* TODO: RX 
-        packet queue */
+        class Transmitter : public Task {
+            public:
+                Transmitter(Scheduler* aScheduler, RadioModule* radioModule);
+                bool Callback();
+                bool OnEnable();
+                void OnDisable();
+                void setPacket(LoRaPacket loraPacket);
+            private:
+                RadioModule* radioModule;
+                LoRaPacket loraPacket;
+        } tTransmitter;
+
+        /* TODO: RX packet queue */
     protected:
         bool receiving = false;
         bool transmitting = false;

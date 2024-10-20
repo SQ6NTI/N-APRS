@@ -24,7 +24,7 @@ void setup() {
 
     ESP_LOGI(TAG, "");
     ESP_LOGI(TAG, "");
-    ESP_LOGI(TAG, "---------- N-APRS ----------");
+    ESP_LOGI(TAG, "---------- ESP32-LoRa-APRS ----------");
     ESP_LOGI(TAG, "");
     ESP_LOGI(TAG, "");
     ESP_LOGI(TAG, "System starting");
@@ -41,6 +41,12 @@ void setup() {
     radioModule->attachInterrupt([]() { radioModule->interruptHandler(); });
     radioModule->startReceive();
     
+    LoRaPacket loraPacket = LoRaPacket_init_default;
+    std::string aprs_data = RADIOLIB_APRS_LORA_HEADER;
+    aprs_data += "SQ6NTI-5>APLN01:@093045z5105.20N/01700.90E>test tracker";
+    memcpy(loraPacket.data.bytes, (uint8_t*)aprs_data.c_str(), aprs_data.length());
+    loraPacket.data.size = aprs_data.length();
+    radioModule->tTransmitter.setPacket(loraPacket);
 
     stateModule->initialize();
     
@@ -58,9 +64,16 @@ void loop() {
         lastGNSSsend = millis();
     }*/
 
+    taskScheduler.execute();
+
     if (millis() - lastAPRSsend > 60000) {
+        radioModule->tTransmitter.restart();
+        lastAPRSsend = millis();
+    }
+
+    /*if (millis() - lastAPRSsend > 60000) {
         ESP_LOGD(TAG, "Sending APRS position");
-        char destination[] = "GPS";
+        char destination[] = "APLN01";
         char latitude[] = "5105.20N";
         char longitude[] = "01700.90E";
         char message[] = "test tracker";
@@ -68,5 +81,5 @@ void loop() {
         int state = aprs->sendPosition(destination, 1, latitude, longitude, message, timestamp);
         ESP_LOGD(TAG, "APRS position sending state: %d", state);
         lastAPRSsend = millis();
-    }
+    }*/
 }
