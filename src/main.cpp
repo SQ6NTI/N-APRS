@@ -24,7 +24,7 @@ void setup() {
 
     ESP_LOGI(TAG, "");
     ESP_LOGI(TAG, "");
-    ESP_LOGI(TAG, "---------- ESP32-LoRa-APRS ----------");
+    ESP_LOGI(TAG, "---------- N-APRS ----------");
     ESP_LOGI(TAG, "");
     ESP_LOGI(TAG, "");
     ESP_LOGI(TAG, "System starting");
