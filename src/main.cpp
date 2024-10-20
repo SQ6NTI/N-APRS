@@ -1,3 +1,9 @@
+/*
+ * N-APRS
+ * Modular APRS software for Arduino
+ * Source: https://github.com/SQ6NTI/N-APRS
+*/
+
 #include <Arduino.h>
 #include <esp_log.h>
 #include <TaskScheduler.h>
@@ -7,6 +13,8 @@
 #include "modules/Modules.h"
 
 static const char* TAG = "main";
+static const char* VERSION = "0.0.1";
+static const char* VERSION_DATE = "2024-10-21";
 
 Scheduler taskScheduler;
 
@@ -16,18 +24,18 @@ unsigned long lastAPRSsend = 0;
 APRSClient* aprs;
 
 void setup() {
-    // Creates module class instances
+    /* Creates module class instances */
     deployModules(&taskScheduler);
-    
-    // TODO: temporary reference to serial for debugging aid
+
     Serial.begin(115200);
 
-    ESP_LOGI(TAG, "");
-    ESP_LOGI(TAG, "");
-    ESP_LOGI(TAG, "---------- N-APRS ----------");
-    ESP_LOGI(TAG, "");
-    ESP_LOGI(TAG, "");
-    ESP_LOGI(TAG, "System starting");
+    Serial.println();
+    Serial.println();
+    Serial.printf("---------- N-APRS %s (%s)----------\r\n", VERSION, VERSION_DATE);
+    Serial.println();
+    Serial.println();
+    Serial.println("System starting...");
+    
 
     #if defined(HAS_I2C)
         i2cModule->initialize();
