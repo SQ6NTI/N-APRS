@@ -1,5 +1,7 @@
 #pragma once
 
+#include <esp_log.h>
+
 #if defined(HAS_GPS)
     #include "modules/GPSModule.h"
 #endif

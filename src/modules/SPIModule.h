@@ -1,7 +1,7 @@
 #pragma once
 
-#include <SPI.h>
 #include <esp_log.h>
+#include <SPI.h>
 
 class SPIModule {
     public:

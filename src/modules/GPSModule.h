@@ -1,5 +1,6 @@
 #pragma once
 
+#include <esp_log.h>
 #include "Position.pb.h"
 
 #if defined(HAS_PMU)

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <esp_log.h>
 #include <Wire.h>
 
 class I2CModule {
