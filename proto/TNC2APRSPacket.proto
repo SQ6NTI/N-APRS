@@ -50,18 +50,18 @@ message TNC2APRSPacket {
      */
     DataType data_type = 3;
 
-    optional APRSPosition aprs_position = 4;
-    optional APRSDirFinding aprs_dir_finding = 5;
-    optional APRSObject aprs_object = 6;
-    optional APRSWeather aprs_weather = 7;
-    optional APRSTelemetry aprs_telemetry = 8;
-    optional APRSMessage aprs_message = 9;
-    optional APRSQuery aprs_query = 10;
-    optional APRSStatus aprs_status = 11;
-    optional APRSThirdParty aprs_third_party = 12;
-    optional APRSUserFormat aprs_other = 13;
-
-    /* TODO: implement the defined data types from http://www.aprs.org/doc/APRS101.PDF */
-
+    oneof payload {
+        APRSPosition aprs_position = 4;
+        APRSDirFinding aprs_dir_finding = 5;
+        APRSObject aprs_object = 6;
+        APRSWeather aprs_weather = 7;
+        APRSTelemetry aprs_telemetry = 8;
+        APRSMessage aprs_message = 9;
+        APRSQuery aprs_query = 10;
+        APRSStatus aprs_status = 11;
+        APRSThirdParty aprs_third_party = 12;
+        APRSUserFormat aprs_other = 13;
+    }
+    
     optional string comment = 14;
 }
