@@ -6,5 +6,5 @@ import "LoRaPacketMeta.proto";
 
 message LoRaPacket {
     optional LoRaPacketMeta metadata = 1;
-    bytes packet = 2;
+    bytes data = 2;
 }

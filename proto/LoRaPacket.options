@@ -1,0 +1,3 @@
+# Options guide: https://jpa.kapsi.fi/nanopb/docs/reference.html#defining-the-options-in-a-.options-file
+
+LoRaPacket.data max_size:256
