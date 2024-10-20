@@ -33,16 +33,16 @@ bool PowerModule::initialize() {
     #endif
 }
 
-void PowerModule::gpsOn() {
-    #if defined(HAS_AXP192) && defined(HAS_GPS)
-        ESP_LOGD(TAG, "Turning on power for GPS");
+void PowerModule::gnssOn() {
+    #if defined(HAS_AXP192) && defined(HAS_GNSS)
+        ESP_LOGD(TAG, "Turning on power for GNSS");
         axp.setPowerOutPut(AXP192_LDO3, AXP202_ON);
     #endif
 }
 
-void PowerModule::gpsOff() {
-    #if defined(HAS_AXP192) && defined(HAS_GPS)
-        ESP_LOGD(TAG, "Turning off power for GPS");
+void PowerModule::gnssOff() {
+    #if defined(HAS_AXP192) && defined(HAS_GNSS)
+        ESP_LOGD(TAG, "Turning off power for GNSS");
         axp.setPowerOutPut(AXP192_LDO3, AXP202_OFF);
     #endif
 }

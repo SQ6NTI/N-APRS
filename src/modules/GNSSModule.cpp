@@ -1,31 +1,32 @@
 #include "configuration.h"
 #include "defaults.h"
-#include "modules/GPSModule.h"
+#include "modules/GNSSModule.h"
 
-static const char *const TAG = "GPSModule";
+static const char *const TAG = "GNSSModule";
 
-HardwareSerial GPSModule::gpsSerial(1);
+HardwareSerial GNSSModule::gnssSerial(1);
 
-GPSModule::GPSModule() {
-    currentPosition = Position_init_default;
+GNSSModule::GNSSModule(Scheduler* aScheduler) {
+    this->aScheduler = aScheduler;
+    currentPosition = GNSSPosition_init_default;
 }
 
 #if defined(HAS_PMU)
-bool GPSModule::initialize(PowerModule* powerModule) {
+bool GNSSModule::initialize(PowerModule* powerModule) {
     this->powerModule = powerModule;
-    this->powerModule->gpsOn();
+    this->powerModule->gnssOn();
     return initialize();
 }
 #endif
 
-bool GPSModule::initialize() {
-    ESP_LOGD(TAG, "Initializing serial for GPS");
-    gpsSerial.begin(GPS_BAUD_RATE, SERIAL_8N1, GPS_RX_PIN, GPS_TX_PIN);
+bool GNSSModule::initialize() {
+    ESP_LOGD(TAG, "Initializing serial for GNSS");
+    gnssSerial.begin(GNSS_BAUD_RATE, SERIAL_8N1, GNSS_RX_PIN, GNSS_TX_PIN);
 
-    ESP_LOGD(TAG, "Initializing GPS");
+    ESP_LOGD(TAG, "Initializing GNSS");
     #if defined(HAS_UBLOX)
         //uBloxGNSS.enableDebugging();
-        if (!uBloxGNSS.begin(gpsSerial)) {
+        if (!uBloxGNSS.begin(gnssSerial)) {
             ESP_LOGE(TAG, "u-blox GNSS failed to start");
             while (1);
         }
@@ -39,7 +40,7 @@ bool GPSModule::initialize() {
     return true;
 }
 
-void GPSModule::checkPosition() {
+void GNSSModule::checkPosition() {
     /* Below example 3D fix data is for testing */
     currentPosition.latitude = 510864341; /* 51.0864341 deg N */
     currentPosition.longitude = 170156686; /* 17.0156686 deg E */
@@ -56,18 +57,18 @@ void GPSModule::checkPosition() {
 
     /* Below example is 2D fix */
     /*
-    [6213027][I][GPSModule.cpp:59] checkPosition(): [GPSModule] Lat : 510867526
-    [6213033][I][GPSModule.cpp:60] checkPosition(): [GPSModule] Lon : 170155898
-    [6213040][I][GPSModule.cpp:61] checkPosition(): [GPSModule] Alt : 191225
-    [6213047][I][GPSModule.cpp:62] checkPosition(): [GPSModule] Unix: 1728160151
-    [6213053][I][GPSModule.cpp:63] checkPosition(): [GPSModule] PDOP: 735
-    [6213060][I][GPSModule.cpp:64] checkPosition(): [GPSModule] HDOP: 729
-    [6213066][I][GPSModule.cpp:65] checkPosition(): [GPSModule] VDOP: 100
-    [6213072][I][GPSModule.cpp:66] checkPosition(): [GPSModule] Gspd: 865
-    [6213078][I][GPSModule.cpp:67] checkPosition(): [GPSModule] Head: 10162088
-    [6213085][I][GPSModule.cpp:68] checkPosition(): [GPSModule] FixT: 2
-    [6213091][I][GPSModule.cpp:69] checkPosition(): [GPSModule] SIV : 3
-    [6213097][I][GPSModule.cpp:70] checkPosition(): [GPSModule] SEQ : 2071
+    [6213027][I][GNSSModule.cpp:59] checkPosition(): [GNSSModule] Lat : 510867526
+    [6213033][I][GNSSModule.cpp:60] checkPosition(): [GNSSModule] Lon : 170155898
+    [6213040][I][GNSSModule.cpp:61] checkPosition(): [GNSSModule] Alt : 191225
+    [6213047][I][GNSSModule.cpp:62] checkPosition(): [GNSSModule] Unix: 1728160151
+    [6213053][I][GNSSModule.cpp:63] checkPosition(): [GNSSModule] PDOP: 735
+    [6213060][I][GNSSModule.cpp:64] checkPosition(): [GNSSModule] HDOP: 729
+    [6213066][I][GNSSModule.cpp:65] checkPosition(): [GNSSModule] VDOP: 100
+    [6213072][I][GNSSModule.cpp:66] checkPosition(): [GNSSModule] Gspd: 865
+    [6213078][I][GNSSModule.cpp:67] checkPosition(): [GNSSModule] Head: 10162088
+    [6213085][I][GNSSModule.cpp:68] checkPosition(): [GNSSModule] FixT: 2
+    [6213091][I][GNSSModule.cpp:69] checkPosition(): [GNSSModule] SIV : 3
+    [6213097][I][GNSSModule.cpp:70] checkPosition(): [GNSSModule] SEQ : 2071
     */
 
     /*#if defined(HAS_UBLOX)

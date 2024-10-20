@@ -1,6 +1,6 @@
 /* Main microcontroller settings */
-#define GPS_RX_PIN                  34      /* ESP32 IO34 (PIN10) = NEO6M/NEO8M TXD1              (PIN20) */
-#define GPS_TX_PIN                  12      /* ESP32 IO12 (PIN18) = NEO6M/NEO8M RXD1              (PIN21) */
+#define GNSS_RX_PIN                  34      /* ESP32 IO34 (PIN10) = NEO6M/NEO8M TXD1              (PIN20) */
+#define GNSS_TX_PIN                  12      /* ESP32 IO12 (PIN18) = NEO6M/NEO8M RXD1              (PIN21) */
 #define BUTTON_PIN                  38      /* ESP32 IO38 (PIN7 ) = SW5 BUTTON                            */
 #define BUTTON_PIN_MASK             GPIO_SEL_38
 #define HAS_I2C
@@ -22,11 +22,11 @@
 /* Display component */
 #define HAS_DISPLAY
 
-/* GPS component */
-#define HAS_GPS
+/* GNSS component */
+#define HAS_GNSS
 #define HAS_UBLOX
-#define GPS_SERIAL                  1
-#define GPS_BAUD_RATE               9600
+#define GNSS_SERIAL                 1
+#define GNSS_BAUD_RATE              9600
 
 /* Power management component */
 #define HAS_PMU

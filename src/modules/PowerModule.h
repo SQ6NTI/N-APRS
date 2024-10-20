@@ -8,8 +8,8 @@ class PowerModule {
     public:
         PowerModule();
         bool initialize();
-        void gpsOn();
-        void gpsOff();
+        void gnssOn();
+        void gnssOff();
     protected:
     private:
 };

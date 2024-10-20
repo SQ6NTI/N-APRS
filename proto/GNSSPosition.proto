@@ -2,7 +2,7 @@ syntax = "proto3";
 /* Language guide: https://protobuf.dev/programming-guides/proto3/ */
 /* PlatformIO examples: https://github.com/nanopb/nanopb/tree/master/examples/platformio */
 
-message Position {
+message GNSSPosition {
     /*
      * Stores latitude in 4-byte signed integer (multiply by 1e-7 to get floating point degrees)
      */
@@ -29,7 +29,7 @@ message Position {
     fixed32 time = 5;
 
     /*
-     * Position source: manual, internal GPS, external GPS
+     * Position source: manual, internal GNSS, external GNSSGNSS
      */
     enum PositionSource {
         POSITION_UNKNOWN = 0;
@@ -44,7 +44,7 @@ message Position {
     PositionSource position_source = 6;
 
     /*
-     * Altitude source: manual, internal GPS, external GPS, barometric sensor
+     * Altitude source: manual, internal GNSS, external GNSS, barometric sensor
      */
     enum AltitudeSource {
         ALTITUDE_UNKNOWN = 0;
@@ -60,7 +60,7 @@ message Position {
     AltitudeSource altitude_source = 7;
 
     /*
-     * Timestamp of GPS position acquisition in seconds since 1970
+     * Timestamp of GNSS position acquisition in seconds since 1970
      */
     fixed32 position_timestamp = 8;
 
