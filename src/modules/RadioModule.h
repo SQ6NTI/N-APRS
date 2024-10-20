@@ -62,7 +62,3 @@ class RadioModule {
         #endif
         
 };
-
-class RM2 : RadioModule {
-
-};
