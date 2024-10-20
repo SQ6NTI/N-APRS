@@ -1,7 +1,6 @@
 #pragma once
 
 #include <esp_log.h>
-#include "Position.pb.h"
 
 #if defined(HAS_PMU)
     #include <modules/PowerModule.h>
@@ -10,6 +9,8 @@
 #if defined(HAS_UBLOX)
     #include <SparkFun_u-blox_GNSS_Arduino_Library.h>
 #endif
+
+#include "Position.pb.h"
 
 class GPSModule {
     public:
