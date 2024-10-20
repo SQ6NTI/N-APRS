@@ -15,7 +15,7 @@ void deployModules(Scheduler* aScheduler) {
     powerModule = new PowerModule();
     /* FIXME: might not need this StateModule eventually */
     //stateModule = new StateModule();
-    gnssModule = new GNSSModule();
+    gnssModule = new GNSSModule(aScheduler);
     radioModule = new RadioModule(aScheduler);
     aprsModule = new APRSModule();
 }

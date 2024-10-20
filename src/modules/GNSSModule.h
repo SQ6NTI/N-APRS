@@ -16,28 +16,38 @@ class GNSSModule {
         /* Constructor requires Scheduler to be specified */
         GNSSModule(Scheduler* aScheduler);
 
-        class Position : public Task {
+        #if defined(HAS_PMU)
+            /* Constructor that allows GNSSModule to turn on power for GNSS device */
+            bool initialize(PowerModule* powerModule);
+        #endif
+        /* This should be called first after creating new GNSSModule object */
+        bool initialize();
+
+        /* This is likely a temporary method of manual position checking */
+        void checkPosition();
+
+        /* Wrapper to read currentPosition */
+        GNSSPosition getCurrentPosition();
+
+        class Receiver : public Task {
             public:
-                Receiver(Scheduler* aScheduler, RadioModule* radioModule);
+                /* Constructor for the GNSSModule's nested class Receiver */
+                Receiver(Scheduler* aScheduler, GNSSModule* gnssModule);
+
+                /* Handler for receiving location from the connected GNSS device */
                 bool Callback();
                 bool OnEnable();
                 void OnDisable();
             private:
-                RadioModule* radioModule;
-                LoRaPacket loraPacket;
+                GNSSModule* gnssModule;
         } tReceiver;
-        
-        static HardwareSerial gnssSerial;
-
-        #if defined(HAS_PMU)
-            bool initialize(PowerModule* powerModule);
-        #endif
-        bool initialize();
-        void checkPosition();
     protected:
         GNSSPosition currentPosition;
     private:
         Scheduler* aScheduler;
+
+        static HardwareSerial gnssSerial;
+
         #if defined(HAS_PMU)
             PowerModule* powerModule;
         #endif

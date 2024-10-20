@@ -6,7 +6,8 @@ static const char *const TAG = "GNSSModule";
 
 HardwareSerial GNSSModule::gnssSerial(1);
 
-GNSSModule::GNSSModule(Scheduler* aScheduler) {
+GNSSModule::GNSSModule(Scheduler* aScheduler)
+        : tReceiver(aScheduler, this) {
     this->aScheduler = aScheduler;
     currentPosition = GNSSPosition_init_default;
 }
@@ -40,20 +41,31 @@ bool GNSSModule::initialize() {
     return true;
 }
 
-void GNSSModule::checkPosition() {
+GNSSPosition GNSSModule::getCurrentPosition() {
+    return currentPosition;
+}
+
+GNSSModule::Receiver::Receiver(Scheduler* aScheduler, GNSSModule* gnssModule)
+        : Task(TASK_SECOND, TASK_FOREVER, aScheduler, false) {
+    this->gnssModule = gnssModule;
+    this->gnssModule->currentPosition = GNSSPosition_init_default;
+}
+
+bool GNSSModule::Receiver::Callback() {
+    /* TODO: implement better */
     /* Below example 3D fix data is for testing */
-    currentPosition.latitude = 510864341; /* 51.0864341 deg N */
-    currentPosition.longitude = 170156686; /* 17.0156686 deg E */
-    currentPosition.altitude = 168836; /* 168.836 m */
-    currentPosition.time = 1728160247; /* Sat Oct 05 2024 20:30:47 GMT+0000 */
-    currentPosition.pdop = 1236; /* PDOP = 12.36 */
-    currentPosition.hdop = 650; /* HDOP = 6.5 */
-    currentPosition.vdop = 1052; /* VDOP = 10.52 */
-    currentPosition.ground_speed = 1425; /* 1.425 m */
-    currentPosition.heading = 9492034; /* 94.92034 deg */
-    currentPosition.fix_type = 3; /* 3D fix */
-    currentPosition.siv = 4; /* 4 satellites in view */
-    currentPosition.sequence_counter = 2103; /* Sequence number 2103 */
+    gnssModule->currentPosition.latitude = 510864341; /* 51.0864341 deg N */
+    gnssModule->currentPosition.longitude = 170156686; /* 17.0156686 deg E */
+    gnssModule->currentPosition.altitude = 168836; /* 168.836 m */
+    gnssModule->currentPosition.time = 1728160247; /* Sat Oct 05 2024 20:30:47 GMT+0000 */
+    gnssModule->currentPosition.pdop = 1236; /* PDOP = 12.36 */
+    gnssModule->currentPosition.hdop = 650; /* HDOP = 6.5 */
+    gnssModule->currentPosition.vdop = 1052; /* VDOP = 10.52 */
+    gnssModule->currentPosition.ground_speed = 1425; /* 1.425 m */
+    gnssModule->currentPosition.heading = 9492034; /* 94.92034 deg */
+    gnssModule->currentPosition.fix_type = 3; /* 3D fix */
+    gnssModule->currentPosition.siv = 4; /* 4 satellites in view */
+    gnssModule->currentPosition.sequence_counter = 2103; /* Sequence number 2103 */
 
     /* Below example is 2D fix */
     /*
@@ -72,32 +84,44 @@ void GNSSModule::checkPosition() {
     */
 
     /*#if defined(HAS_UBLOX)
-        currentPosition.latitude = uBloxGNSS.getLatitude();
-        currentPosition.longitude = uBloxGNSS.getLongitude();
-        currentPosition.altitude = uBloxGNSS.getAltitudeMSL();
-        currentPosition.time = uBloxGNSS.getUnixEpoch();
-        currentPosition.position_source = Position_PositionSource_POSITION_INTERNAL;
-        currentPosition.altitude_source = Position_AltitudeSource_ALTITUDE_MANUAL;
-        currentPosition.PDOP = uBloxGNSS.getPDOP();
-        currentPosition.HDOP = uBloxGNSS.getHorizontalDOP();
-        currentPosition.VDOP = uBloxGNSS.getVerticalDOP();
-        currentPosition.ground_speed = uBloxGNSS.getGroundSpeed();
-        currentPosition.heading = uBloxGNSS.getHeading();
-        currentPosition.fix_type = uBloxGNSS.getFixType();
-        currentPosition.siv = uBloxGNSS.getSIV();
-        currentPosition.sequence_counter++;
+        gnssModule->currentPosition.latitude = uBloxGNSS.getLatitude();
+        gnssModule->currentPosition.longitude = uBloxGNSS.getLongitude();
+        gnssModule->currentPosition.altitude = uBloxGNSS.getAltitudeMSL();
+        gnssModule->currentPosition.time = uBloxGNSS.getUnixEpoch();
+        gnssModule->currentPosition.position_source = Position_PositionSource_POSITION_INTERNAL;
+        gnssModule->currentPosition.altitude_source = Position_AltitudeSource_ALTITUDE_MANUAL;
+        gnssModule->currentPosition.PDOP = uBloxGNSS.getPDOP();
+        gnssModule->currentPosition.HDOP = uBloxGNSS.getHorizontalDOP();
+        gnssModule->currentPosition.VDOP = uBloxGNSS.getVerticalDOP();
+        gnssModule->currentPosition.ground_speed = uBloxGNSS.getGroundSpeed();
+        gnssModule->currentPosition.heading = uBloxGNSS.getHeading();
+        gnssModule->currentPosition.fix_type = uBloxGNSS.getFixType();
+        gnssModule->currentPosition.siv = uBloxGNSS.getSIV();
+        gnssModule->currentPosition.sequence_counter++;
     #endif*/
 
-    ESP_LOGD(TAG, "Lat : %d", currentPosition.latitude);
-    ESP_LOGD(TAG, "Lon : %d", currentPosition.longitude);
-    ESP_LOGD(TAG, "Alt : %d", currentPosition.altitude);
-    ESP_LOGD(TAG, "Unix: %d", currentPosition.time);
-    ESP_LOGD(TAG, "PDOP: %d", currentPosition.pdop);
-    ESP_LOGD(TAG, "HDOP: %d", currentPosition.hdop);
-    ESP_LOGD(TAG, "VDOP: %d", currentPosition.vdop);
-    ESP_LOGD(TAG, "Gspd: %d", currentPosition.ground_speed);
-    ESP_LOGD(TAG, "Head: %d", currentPosition.heading);
-    ESP_LOGD(TAG, "FixT: %d", currentPosition.fix_type);
-    ESP_LOGD(TAG, "SIV : %d", currentPosition.siv);
-    ESP_LOGD(TAG, "SEQ : %d", currentPosition.sequence_counter);
+    ESP_LOGD(TAG, "Lat: %d   Lon: %d   Alt: %d   Unix: %d   PDOP: %d   HDOP: %d   VDOP: %d   Gspd: %d   Head: %d   FixT: %d   SIV: %d   SEQ : %d",
+        gnssModule->currentPosition.latitude,
+        gnssModule->currentPosition.longitude,
+        gnssModule->currentPosition.altitude,
+        gnssModule->currentPosition.time,
+        gnssModule->currentPosition.pdop,
+        gnssModule->currentPosition.hdop,
+        gnssModule->currentPosition.vdop,
+        gnssModule->currentPosition.ground_speed,
+        gnssModule->currentPosition.heading,
+        gnssModule->currentPosition.fix_type,
+        gnssModule->currentPosition.siv,
+        gnssModule->currentPosition.sequence_counter);
+
+    return true;
+}
+
+bool GNSSModule::Receiver::OnEnable() {
+    ESP_LOGD(TAG, "Receiver enabled");
+    return true;
+}
+
+void GNSSModule::Receiver::OnDisable() {
+    ESP_LOGD(TAG, "Receiver disabled");
 }

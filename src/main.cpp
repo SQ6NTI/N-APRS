@@ -56,8 +56,15 @@ void setup() {
     loraPacket.data.size = aprs_data.length();
     radioModule->tTransmitter.setPacket(loraPacket);
 
-    gnssModule->initialize();
-    
+    #if defined(HAS_GNSS)
+        #if defined(HAS_PMU)
+            gnssModule->initialize(powerModule);
+        #else
+            gnssModule->initialize();
+        #endif
+        gnssModule->tReceiver.enable();
+    #endif
+
     aprs = new APRSClient(radioModule->getRadioInterface());
     char source[] = "SQ6NTI";
     int aprsState = aprs->begin('>', source, 5);
