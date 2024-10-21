@@ -7,7 +7,6 @@ static const char *const TAG = "RadioModule";
 RadioModule::RadioModule(Scheduler* aScheduler)
         : tReceiver(aScheduler, this), tTransmitter(aScheduler, this) {
     this->aScheduler = aScheduler;
-    //tRadioRx = new Task(TASK_IMMEDIATE, TASK_FOREVER, [this]() { this->receivePacket(); }, &aScheduler, false);
 }
 
 bool RadioModule::initialize() {
@@ -175,20 +174,21 @@ void IRAM_ATTR RadioModule::interruptHandler(void) {
     }
 }
 
-/* Constructor for the RadioModule's nested class Transmitter */
 RadioModule::Transmitter::Transmitter(Scheduler* aScheduler, RadioModule* radioModule)
         : Task(TASK_IMMEDIATE, TASK_ONCE, aScheduler, false) {
     this->radioModule = radioModule;
     loraPacket = LoRaPacket_init_default;
 }
 
-/* Handler for transmitting packets from radioInterface */
 bool RadioModule::Transmitter::Callback() {
     int16_t state = RADIOLIB_ERR_NONE;
 
     ESP_LOGD(TAG, "Transmitter callback started, transmitting %d bytes", loraPacket.data.size);
-    
-    state = radioModule->radioInterface.startTransmit(loraPacket.data.bytes, loraPacket.data.size);
+    radioModule->receiving = false;
+    radioModule->transmitting = true;
+    /* transmit() is a blocking operation */
+    state = radioModule->radioInterface.transmit(loraPacket.data.bytes, loraPacket.data.size);
+    radioModule->transmitting = false;
     if (state != RADIOLIB_ERR_NONE) {
         ESP_LOGE(TAG, "Error: Packet transmit failed with code: %d", state);
         return false;
@@ -204,6 +204,9 @@ bool RadioModule::Transmitter::OnEnable() {
 
 void RadioModule::Transmitter::OnDisable() {
     ESP_LOGD(TAG, "Transmitter disabled");
+
+    /* Restart receiving */
+    radioModule->startReceive();
 }
 
 void RadioModule::Transmitter::setPacket(LoRaPacket loraPacket) {
@@ -211,14 +214,12 @@ void RadioModule::Transmitter::setPacket(LoRaPacket loraPacket) {
     ESP_LOGD(TAG, "Packet (len: %d): %s", loraPacket.data.size, loraPacket.data.bytes);
 }
 
-/* Constructor for the RadioModule's nested class Receiver */
 RadioModule::Receiver::Receiver(Scheduler* aScheduler, RadioModule* radioModule)
         : Task(TASK_IMMEDIATE, TASK_ONCE, aScheduler, false) {
     this->radioModule = radioModule;
     loraPacket = LoRaPacket_init_default;
 }
 
-/* Handler for receiving packets from radioInterface */
 bool RadioModule::Receiver::Callback() {
     int16_t state = RADIOLIB_ERR_NONE;
     size_t length;

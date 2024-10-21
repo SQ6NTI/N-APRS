@@ -41,7 +41,10 @@ class RadioModule {
 
         class Receiver : public Task {
             public:
+                /* Constructor for the RadioModule's nested class Receiver */
                 Receiver(Scheduler* aScheduler, RadioModule* radioModule);
+
+                /* Handler for receiving packets from radioInterface */
                 bool Callback();
                 bool OnEnable();
                 void OnDisable();
@@ -52,7 +55,10 @@ class RadioModule {
 
         class Transmitter : public Task {
             public:
+                /* Constructor for the RadioModule's nested class Transmitter */
                 Transmitter(Scheduler* aScheduler, RadioModule* radioModule);
+
+                /* Handler for transmitting packets from radioInterface */
                 bool Callback();
                 bool OnEnable();
                 void OnDisable();
