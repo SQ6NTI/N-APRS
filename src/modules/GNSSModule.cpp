@@ -100,7 +100,7 @@ bool GNSSModule::Receiver::Callback() {
         gnssModule->currentPosition.sequence_counter++;
     #endif*/
 
-    ESP_LOGD(TAG, "Lat: %d   Lon: %d   Alt: %d   Unix: %d   PDOP: %d   HDOP: %d   VDOP: %d   Gspd: %d   Head: %d   FixT: %d   SIV: %d   SEQ : %d",
+    /*ESP_LOGD(TAG, "Lat: %d   Lon: %d   Alt: %d   Unix: %d   PDOP: %d   HDOP: %d   VDOP: %d   Gspd: %d   Head: %d   FixT: %d   SIV: %d   SEQ : %d",
         gnssModule->currentPosition.latitude,
         gnssModule->currentPosition.longitude,
         gnssModule->currentPosition.altitude,
@@ -113,7 +113,7 @@ bool GNSSModule::Receiver::Callback() {
         gnssModule->currentPosition.fix_type,
         gnssModule->currentPosition.siv,
         gnssModule->currentPosition.sequence_counter);
-
+    */
     return true;
 }
 
